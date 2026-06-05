@@ -3,640 +3,602 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tanvi AI – Beta</title>
+    <title>Tanvi AI — Professional</title>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a2e;
-            --border: #2a2a3e;
-            --accent: #7c8aff;
-            --accent-hover: #6b78e0;
-            --text-primary: #e0e0e0;
-            --text-secondary: #888;
-            --user-bubble: #7c8aff;
-            --tanvi-bubble: #1e1e2e;
-            --error-bg: #3a1a1a;
-            --error-border: #5a2a2a;
-            --error-text: #ff6b6b;
+            --bg-primary: #0c0c14;
+            --bg-secondary: #111119;
+            --bg-tertiary: #161622;
+            --bg-input: #1a1a2e;
+            --border: #252538;
+            --border-active: #4a4a6a;
+            --accent: #7c5cfc;
+            --accent-glow: rgba(124, 92, 252, 0.3);
+            --accent-light: #9b8af7;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8b8b9e;
+            --text-muted: #5c5c70;
+            --user-bubble: linear-gradient(135deg, #7c5cfc 0%, #5b3fd4 100%);
+            --tanvi-bubble: #1a1a2e;
+            --error-bg: #2d1520;
+            --error-text: #f87171;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.5);
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(124, 92, 252, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(124, 92, 252, 0.04) 0%, transparent 50%);
         }
 
-        .chat-container {
+        .app-container {
             width: 100%;
-            max-width: 850px;
+            max-width: 900px;
+            height: 94vh;
             background: var(--bg-secondary);
-            border-radius: 24px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(124, 138, 255, 0.1);
-            overflow: hidden;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.04);
             display: flex;
             flex-direction: column;
-            height: 92vh;
-            backdrop-filter: blur(20px);
+            overflow: hidden;
+            position: relative;
         }
+
+        /* Sidebar */
+        .sidebar {
+            display: none;
+            width: 260px;
+            background: var(--bg-tertiary);
+            border-right: 1px solid var(--border);
+            flex-direction: column;
+            padding: 20px;
+            gap: 14px;
+            overflow-y: auto;
+        }
+        @media (min-width: 768px) { .sidebar { display: flex; } .app-container { flex-direction: row; } }
+
+        .sidebar-header {
+            display: flex; align-items: center; gap: 10px;
+            padding-bottom: 12px; border-bottom: 1px solid var(--border);
+        }
+        .sidebar-logo {
+            width: 32px; height: 32px; background: var(--accent);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 15px; color: #fff;
+        }
+        .sidebar-title { font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .sidebar-subtitle { font-size: 0.65rem; color: var(--text-muted); }
+
+        .sidebar-btn {
+            width: 100%; padding: 9px 14px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-primary); cursor: pointer;
+            font-size: 0.8rem; display: flex; align-items: center; gap: 8px;
+            transition: var(--transition);
+        }
+        .sidebar-btn:hover { background: var(--bg-input); border-color: var(--border-active); }
+
+        .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-nav button {
+            width: 100%; padding: 7px 12px; border-radius: var(--radius-sm);
+            border: none; background: transparent; color: var(--text-secondary);
+            cursor: pointer; font-size: 0.78rem; text-align: left; transition: var(--transition);
+        }
+        .sidebar-nav button:hover { background: var(--bg-input); color: #fff; }
+        .sidebar-nav button.active { background: var(--bg-input); color: #fff; }
+
+        .sidebar-footer {
+            margin-top: auto; padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .sidebar-footer button {
+            width: 100%; padding: 8px 12px; border-radius: var(--radius-sm);
+            border: none; background: transparent; color: var(--text-muted);
+            cursor: pointer; font-size: 0.72rem; text-align: left; transition: var(--transition);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .sidebar-footer button:hover { background: var(--bg-input); color: #fff; }
+
+        /* Main */
+        .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
         .chat-header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #1e1e3a 100%);
-            padding: 24px 28px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
+            padding: 14px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg-secondary); flex-shrink: 0;
         }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
+        .header-left { display: flex; align-items: center; gap: 10px; }
         .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #7c8aff, #a78bfa);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: #fff;
-            flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: var(--radius-sm);
+            background: var(--accent); display: flex; align-items: center;
+            justify-content: center; font-weight: 700; font-size: 15px; color: #fff;
         }
+        .header-info h2 { font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .status-line { font-size: 0.7rem; display: flex; align-items: center; gap: 5px; color: var(--text-secondary); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+        .status-dot.offline { background: var(--error-text); animation: none; }
+        .status-dot.connecting { background: var(--warning); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-        .header-info h1 {
-            font-size: 1.2rem;
-            color: #fff;
-            font-weight: 600;
-            letter-spacing: -0.3px;
+        .header-actions { display: flex; gap: 5px; }
+        .icon-btn {
+            width: 32px; height: 32px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition); font-size: 13px;
         }
+        .icon-btn:hover { background: var(--bg-input); color: #fff; }
 
-        .header-info .subtitle {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-indicator {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #4caf50;
-            animation: pulse 2s infinite;
-        }
-
-        .status-indicator.offline {
-            background: #f44336;
-            animation: none;
-        }
-
-        .status-indicator.connecting {
-            background: #ff9800;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            font-size: 16px;
-        }
-
-        .btn-icon:hover {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
-        }
-
+        /* Messages */
         .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
+            flex: 1; overflow-y: auto; padding: 16px 20px;
+            display: flex; flex-direction: column; gap: 16px;
             scroll-behavior: smooth;
         }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 10px;
-        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
         .message {
-            max-width: 82%;
-            padding: 14px 18px;
-            border-radius: 18px;
-            line-height: 1.65;
-            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            max-width: 88%;
+            animation: fadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
+        .message.user { align-self: flex-end; }
+        .message.tanvi { align-self: flex-start; }
+        .message.error { align-self: center; max-width: 90%; }
 
-        .message.user {
-            align-self: flex-end;
-            background: var(--user-bubble);
-            color: #fff;
+        .bubble {
+            padding: 10px 16px; border-radius: var(--radius-md);
+            line-height: 1.6; word-wrap: break-word; position: relative;
+        }
+        .message.user .bubble {
+            background: var(--user-bubble); color: #fff;
             border-bottom-right-radius: 6px;
         }
-
-        .message.tanvi {
-            align-self: flex-start;
-            background: var(--tanvi-bubble);
-            border: 1px solid var(--border);
+        .message.tanvi .bubble {
+            background: var(--tanvi-bubble); border: 1px solid var(--border);
             border-bottom-left-radius: 6px;
         }
-
-        .message.error {
-            align-self: center;
-            background: var(--error-bg);
-            border: 1px solid var(--error-border);
-            color: var(--error-text);
-            font-size: 0.85rem;
-            max-width: 90%;
-            text-align: center;
+        .message.error .bubble {
+            background: var(--error-bg); border: 1px solid rgba(248,113,113,0.3);
+            color: var(--error-text); font-size: 0.8rem; text-align: center;
         }
 
-        .message .msg-time {
-            font-size: 0.68rem;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 6px;
-            text-align: right;
+        .msg-meta {
+            display: flex; align-items: center; gap: 8px;
+            padding: 2px 6px 0; font-size: 0.65rem; color: var(--text-muted);
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .message:hover .msg-meta { opacity: 1; }
+        .message.user .msg-meta { justify-content: flex-end; }
+        .msg-actions { display: flex; gap: 4px; margin-left: 4px; }
+        .msg-actions button {
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 11px; padding: 2px 4px;
+            border-radius: 4px; transition: var(--transition);
+        }
+        .msg-actions button:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+        /* Markdown */
+        .bubble pre {
+            background: #0d0d1a; border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 10px 12px;
+            margin: 8px 0; overflow-x: auto;
+        }
+        .bubble code { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+        .bubble p code { background: rgba(124,92,252,0.15); padding: 1px 5px; border-radius: 3px; }
+        .bubble pre code { background: transparent; padding: 0; }
+        .bubble p { margin-bottom: 6px; }
+        .bubble p:last-child { margin-bottom: 0; }
+        .bubble ul, .bubble ol { padding-left: 18px; margin: 4px 0; }
+        .bubble li { margin-bottom: 2px; }
+        .bubble strong { color: #fff; }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .message.tanvi .msg-time {
-            color: rgba(255, 255, 255, 0.25);
-        }
-
-        /* Markdown / Code styling */
-        .message.tanvi pre {
-            background: #0d0d1a;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 14px 16px;
-            margin: 10px 0;
-            overflow-x: auto;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .message.tanvi code {
-            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 0.82rem;
-            background: rgba(124, 138, 255, 0.12);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .message.tanvi pre code {
-            background: transparent;
-            padding: 0;
-            font-size: 0.8rem;
-        }
-
-        .message.tanvi p {
-            margin-bottom: 8px;
-        }
-
-        .message.tanvi p:last-child {
-            margin-bottom: 0;
-        }
-
-        .message.tanvi ul, .message.tanvi ol {
-            padding-left: 20px;
-            margin: 6px 0;
-        }
-
-        .message.tanvi li {
-            margin-bottom: 3px;
-        }
-
-        .message.tanvi strong {
-            color: #fff;
-        }
-
-        .message.tanvi blockquote {
-            border-left: 3px solid var(--accent);
-            padding-left: 14px;
-            margin: 8px 0;
-            color: #aaa;
-        }
-
-        .message.tanvi table {
-            border-collapse: collapse;
-            margin: 10px 0;
-            width: 100%;
-            font-size: 0.85rem;
-        }
-
-        .message.tanvi th, .message.tanvi td {
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        .message.tanvi th {
-            background: var(--bg-tertiary);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* Typing */
         .typing-indicator {
-            align-self: flex-start;
-            display: flex;
-            gap: 4px;
-            padding: 14px 18px;
-            background: var(--tanvi-bubble);
-            border: 1px solid var(--border);
-            border-radius: 18px;
+            align-self: flex-start; display: flex; gap: 4px;
+            padding: 12px 16px; background: var(--tanvi-bubble);
+            border: 1px solid var(--border); border-radius: var(--radius-md);
             border-bottom-left-radius: 6px;
         }
-
         .typing-indicator span {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--text-secondary);
-            animation: bounce 1.4s infinite ease-in-out;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--text-muted); animation: bounce 1.4s infinite ease-in-out;
         }
-
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
 
-        @keyframes bounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); }
+        .stop-btn {
+            display: none; align-self: center;
+            padding: 6px 14px; border-radius: 20px;
+            border: 1px solid var(--border); background: var(--bg-input);
+            color: var(--text-primary); cursor: pointer; font-size: 0.75rem;
         }
+        .stop-btn:hover { background: var(--error-bg); border-color: var(--error-text); }
 
+        /* Input */
         .chat-input-container {
-            padding: 16px 20px 20px 20px;
-            border-top: 1px solid var(--border);
-            background: var(--bg-secondary);
+            padding: 10px 18px 14px; border-top: 1px solid var(--border);
+            background: var(--bg-secondary); flex-shrink: 0;
         }
-
-        .chat-input-wrapper {
-            display: flex;
-            align-items: flex-end;
-            gap: 10px;
-            background: var(--bg-tertiary);
-            border-radius: 18px;
-            border: 1px solid var(--border);
-            padding: 6px 8px 6px 18px;
-            transition: border-color 0.2s;
+        .input-wrapper {
+            display: flex; align-items: flex-end; gap: 6px;
+            background: var(--bg-input); border-radius: var(--radius-md);
+            border: 1px solid var(--border); padding: 3px 5px 3px 14px;
+            transition: var(--transition);
         }
-
-        .chat-input-wrapper:focus-within {
-            border-color: var(--accent);
+        .input-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .input-wrapper textarea {
+            flex: 1; border: none; background: transparent;
+            color: var(--text-primary); font-size: 0.85rem;
+            resize: none; outline: none; padding: 9px 0;
+            max-height: 100px; font-family: inherit; line-height: 1.5;
         }
-
-        .chat-input-wrapper textarea {
-            flex: 1;
-            border: none;
-            background: transparent;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            resize: none;
-            outline: none;
-            padding: 10px 0;
-            max-height: 120px;
-            font-family: inherit;
-            line-height: 1.5;
-        }
-
-        .chat-input-wrapper textarea::placeholder {
-            color: var(--text-secondary);
-        }
-
+        .input-wrapper textarea::placeholder { color: var(--text-muted); }
         .send-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            border: none;
-            background: var(--accent);
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            font-size: 18px;
+            width: 36px; height: 36px; border-radius: var(--radius-sm);
+            border: none; background: var(--accent); color: #fff;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: var(--transition); flex-shrink: 0; font-size: 14px;
         }
+        .send-btn:hover { background: var(--accent-light); }
+        .send-btn:disabled { background: #333; cursor: not-allowed; }
+        .input-hint { font-size: 0.65rem; color: var(--text-muted); text-align: right; padding: 3px 4px 0; }
 
-        .send-btn:hover {
-            background: var(--accent-hover);
-            transform: scale(1.05);
+        /* Modal overlay */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 100;
+            justify-content: center; align-items: center;
         }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-tertiary); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 24px;
+            max-width: 360px; width: 90%;
+            text-align: center;
+            animation: fadeSlideIn 0.3s ease;
+        }
+        .modal h3 { font-size: 1.1rem; margin-bottom: 8px; color: #fff; }
+        .modal p { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; }
+        .insta-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: #fff; padding: 10px 20px; border-radius: 30px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+        .insta-link:hover { transform: scale(1.05); }
+        .modal-close {
+            margin-top: 14px; background: none; border: none;
+            color: var(--text-muted); cursor: pointer; font-size: 0.78rem;
+        }
+        .modal-close:hover { color: #fff; }
 
-        .send-btn:disabled {
-            background: #444;
-            cursor: not-allowed;
-            transform: none;
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--success); color: #000; padding: 10px 20px;
+            border-radius: 30px; font-weight: 600; font-size: 0.82rem;
+            z-index: 200; animation: fadeSlideIn 0.3s ease;
+            display: none;
         }
-
-        .input-hint {
-            font-size: 0.72rem;
-            color: var(--text-secondary);
-            text-align: right;
-            padding: 6px 8px 0 0;
-        }
-
-        @media (max-width: 600px) {
-            .chat-container {
-                height: 100vh;
-                border-radius: 0;
-            }
-            .message {
-                max-width: 92%;
-            }
-            .chat-messages {
-                padding: 16px 14px;
-            }
-        }
+        .toast.show { display: block; }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="header-left">
-                <div class="avatar">T</div>
-                <div class="header-info">
-                    <h1>Tanvi AI</h1>
-                    <div class="subtitle">
-                        <span class="status-indicator connecting" id="statusDot"></span>
-                        <span id="statusText">Connecting...</span>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">T</div>
+                <div><div class="sidebar-title">Tanvi AI</div><div class="sidebar-subtitle">Professional</div></div>
+            </div>
+            <button class="sidebar-btn" onclick="clearChat()"><i class="fa-solid fa-plus"></i> New Conversation</button>
+            <button class="sidebar-btn" onclick="downloadChat()"><i class="fa-solid fa-download"></i> Download Chat</button>
+            <nav class="sidebar-nav">
+                <button class="active"><i class="fa-regular fa-message"></i> Chat</button>
+                <button><i class="fa-regular fa-clock"></i> History</button>
+                <button><i class="fa-regular fa-gear"></i> Settings</button>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="openContactModal()"><i class="fa-brands fa-instagram"></i> Contact Developer</button>
+                <span style="font-size:0.65rem;color:var(--text-muted);text-align:center;display:block;">Built by Dhruv &copy; 2024</span>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="chat-main">
+            <header class="chat-header">
+                <div class="header-left">
+                    <div class="avatar">T</div>
+                    <div class="header-info">
+                        <h2>Tanvi</h2>
+                        <div class="status-line"><span class="status-dot connecting" id="statusDot"></span> <span id="statusText">Connecting...</span></div>
                     </div>
                 </div>
-            </div>
-            <div class="header-actions">
-                <button class="btn-icon" onclick="clearChat()" title="Clear chat">🗑</button>
-                <button class="btn-icon" onclick="scrollToBottom()" title="Scroll down">↓</button>
-            </div>
-        </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="downloadChat()" title="Download"><i class="fa-solid fa-download"></i></button>
+                    <button class="icon-btn" onclick="clearChat()" title="Clear"><i class="fa-solid fa-eraser"></i></button>
+                </div>
+            </header>
 
-        <div class="chat-messages" id="chatMessages"></div>
-
-        <div class="chat-input-container">
-            <div class="chat-input-wrapper">
-                <textarea id="userInput" rows="1" placeholder="Message Tanvi..." autofocus></textarea>
-                <button class="send-btn" id="sendBtn" title="Send message">➤</button>
+            <div class="chat-messages" id="chatMessages">
+                <button class="stop-btn" id="stopBtn" onclick="stopGeneration()"><i class="fa-solid fa-hand"></i> Stop generating</button>
             </div>
-            <div class="input-hint">Press Enter to send, Shift+Enter for new line</div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea id="userInput" rows="1" placeholder="Ask Tanvi anything..." autofocus></textarea>
+                    <button class="send-btn" id="sendBtn"><i class="fa-solid fa-arrow-up"></i></button>
+                </div>
+                <div class="input-hint"><kbd>Enter</kbd> send &middot; <kbd>Shift+Enter</kbd> new line &middot; <kbd>↑</kbd> edit last</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal">
+            <h3><i class="fa-brands fa-instagram"></i> Developer Contact</h3>
+            <p>Follow or DM on Instagram</p>
+            <a href="https://instagram.com/az9_dhruv" target="_blank" class="insta-link">
+                <i class="fa-brands fa-instagram"></i> @az9_dhruv
+            </a>
+            <br>
+            <button class="modal-close" onclick="closeContactModal()">Close</button>
         </div>
     </div>
 
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <script>
-        // ===================== CONFIGURATION =====================
         const API_URL = "https://tanviai.onrender.com/chat";
         const API_KEY = "tanvi-beta-2024-dhruv";
-        // =========================================================
 
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
         const messagesDiv = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const contactModal = document.getElementById('contactModal');
+        const toast = document.getElementById('toast');
 
-        // Session management
-        let sessionId = localStorage.getItem('tanvi_session');
-        if (!sessionId) {
-            sessionId = 'user_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('tanvi_session', sessionId);
-        }
+        let sessionId = localStorage.getItem('tanvi_session') || 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('tanvi_session', sessionId);
 
-        // Configure marked for safe rendering
-        marked.setOptions({
-            highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    return hljs.highlight(code, { language: lang }).value;
-                }
-                return hljs.highlightAuto(code).value;
-            },
-            breaks: true,
-            gfm: true
+        let abortController = null;
+        let messageIdCounter = 0;
+        let messages = [];
+
+        marked.setOptions({ breaks: true, gfm: true,
+            highlight: (c, l) => l && hljs.getLanguage(l) ? hljs.highlight(c, {language: l}).value : hljs.highlightAuto(c).value
         });
 
-        function getTime() {
-            const now = new Date();
-            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
+        function getTime() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
-        function addTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.id = 'typingIndicator';
-            typingDiv.innerHTML = '<span></span><span></span><span></span>';
-            messagesDiv.appendChild(typingDiv);
+        function addTyping() {
+            const d = document.createElement('div'); d.className = 'typing-indicator'; d.id = 'typing';
+            d.innerHTML = '<span></span><span></span><span></span>';
+            messagesDiv.insertBefore(d, stopBtn);
             scrollToBottom();
         }
+        function removeTyping() { const t = document.getElementById('typing'); if(t) t.remove(); stopBtn.style.display = 'none'; }
 
-        function removeTypingIndicator() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
-        }
+        function addMessage(text, role, id = null) {
+            const msgId = id || 'msg_' + (++messageIdCounter);
+            const msg = document.createElement('div');
+            msg.className = `message ${role}`; msg.id = msgId;
 
-        function addMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${sender}`;
+            const meta = document.createElement('div'); meta.className = 'msg-meta';
+            meta.innerHTML = `${role === 'user' ? 'You' : 'Tanvi'} &middot; ${getTime()}`;
 
-            if (sender === 'tanvi') {
-                // Use marked to parse markdown
-                const htmlContent = marked.parse(text);
-                msgDiv.innerHTML = htmlContent;
-
-                // Highlight code blocks
-                msgDiv.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
+            const actions = document.createElement('span'); actions.className = 'msg-actions';
+            if (role === 'user') {
+                actions.innerHTML = `<button title="Edit" onclick="editMessage('${msgId}')"><i class="fa-solid fa-pen"></i></button>
+                                    <button title="Delete" onclick="deleteMessage('${msgId}')"><i class="fa-solid fa-trash"></i></button>`;
             } else {
-                msgDiv.textContent = text;
+                actions.innerHTML = `<button title="Copy" onclick="copyMessage('${msgId}')"><i class="fa-regular fa-copy"></i></button>
+                                    <button title="Regenerate" onclick="regenerateMessage('${msgId}')"><i class="fa-solid fa-rotate-right"></i></button>`;
             }
+            meta.appendChild(actions);
+            msg.appendChild(meta);
 
-            // Add timestamp
-            const timeDiv = document.createElement('div');
-            timeDiv.className = 'msg-time';
-            timeDiv.textContent = getTime();
-            msgDiv.appendChild(timeDiv);
+            const bubble = document.createElement('div'); bubble.className = 'bubble';
+            if (role === 'tanvi') {
+                bubble.innerHTML = marked.parse(text);
+                bubble.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+            } else {
+                bubble.textContent = text;
+            }
+            msg.appendChild(bubble);
 
-            messagesDiv.appendChild(msgDiv);
+            messagesDiv.insertBefore(msg, stopBtn);
+            messages.push({ id: msgId, role, content: text, element: msg });
             scrollToBottom();
+            return msgId;
         }
 
-        function setStatus(status) {
-            statusDot.className = 'status-indicator';
-            if (status === 'online') {
-                statusDot.classList.add('online');
-                statusText.textContent = 'Online';
-            } else if (status === 'connecting') {
-                statusDot.classList.add('connecting');
-                statusText.textContent = 'Connecting...';
-            } else {
-                statusDot.classList.add('offline');
-                statusText.textContent = 'Offline';
-            }
+        function setStatus(s) {
+            statusDot.className = 'status-dot';
+            if (s === 'online') { statusDot.classList.add('online'); statusText.textContent = 'Online'; }
+            else if (s === 'connecting') { statusDot.classList.add('connecting'); statusText.textContent = 'Connecting...'; }
+            else { statusDot.classList.add('offline'); statusText.textContent = 'Offline'; }
         }
 
-        function scrollToBottom() {
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
+        function scrollToBottom() { messagesDiv.scrollTop = messagesDiv.scrollHeight; }
 
         function clearChat() {
             messagesDiv.innerHTML = '';
+            messagesDiv.appendChild(stopBtn);
+            messages = [];
             addMessage("Chat cleared. How can I help you?", 'tanvi');
         }
 
+        function editMessage(msgId) {
+            const msg = messages.find(m => m.id === msgId);
+            if (!msg) return;
+            userInput.value = msg.content;
+            userInput.focus();
+            deleteMessage(msgId);
+        }
+
+        function deleteMessage(msgId) {
+            const msg = messages.find(m => m.id === msgId);
+            if (!msg) return;
+            msg.element.style.transition = 'all 0.2s';
+            msg.element.style.opacity = '0';
+            msg.element.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                msg.element.remove();
+                messages = messages.filter(m => m.id !== msgId);
+            }, 200);
+        }
+
+        function copyMessage(msgId) {
+            const msg = messages.find(m => m.id === msgId);
+            if (!msg) return;
+            navigator.clipboard.writeText(msg.content);
+            const btn = msg.element.querySelector('.fa-copy').parentElement;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i>'; }, 1500);
+        }
+
+        function regenerateMessage(msgId) {
+            const msg = messages.find(m => m.id === msgId);
+            if (!msg) return;
+            const idx = messages.findIndex(m => m.id === msgId);
+            const prevUser = messages.slice(0, idx).reverse().find(m => m.role === 'user');
+            if (prevUser) {
+                deleteMessage(msgId);
+                sendMessage(prevUser.content);
+            }
+        }
+
+        function stopGeneration() {
+            if (abortController) { abortController.abort(); abortController = null; removeTyping(); sendBtn.disabled = false; }
+        }
+
+        function downloadChat() {
+            if (messages.length === 0) {
+                showToast('No messages to download');
+                return;
+            }
+            let text = 'Tanvi AI Chat Export\n';
+            text += '='.repeat(50) + '\n\n';
+            messages.forEach(m => {
+                text += `[${m.role.toUpperCase()}] ${m.content}\n\n`;
+            });
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url;
+            a.download = `tanvi-chat-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click(); URL.revokeObjectURL(url);
+            showToast('Chat downloaded!');
+        }
+
+        function openContactModal() { contactModal.classList.add('active'); }
+        function closeContactModal() { contactModal.classList.remove('active'); }
+        function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
+
         async function checkBackend() {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({ message: 'ping', session_id: sessionId })
-                });
-                if (response.ok) {
-                    setStatus('online');
-                    return true;
-                }
-            } catch (e) {}
-            setStatus('offline');
-            return false;
+                const r = await fetch(API_URL, { method:'POST',
+                    headers:{'Content-Type':'application/json','Authorization':`Bearer ${API_KEY}`},
+                    body: JSON.stringify({ message:'ping', session_id: sessionId }) });
+                if (r.ok) { setStatus('online'); return true; }
+            } catch(e) {}
+            setStatus('offline'); return false;
         }
 
-        async function sendMessage() {
-            const message = userInput.value.trim();
+        async function sendMessage(overrideMsg = null) {
+            const message = overrideMsg || userInput.value.trim();
             if (!message) return;
-
-            addMessage(message, 'user');
-            userInput.value = '';
-            userInput.style.height = 'auto';
-            sendBtn.disabled = true;
-
-            addTypingIndicator();
-
+            if (!overrideMsg) { addMessage(message, 'user'); userInput.value = ''; userInput.style.height = 'auto'; }
+            sendBtn.disabled = true; addTyping(); stopBtn.style.display = 'block';
+            abortController = new AbortController();
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({ message, session_id: sessionId })
-                });
-
-                removeTypingIndicator();
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        addMessage("**Authentication failed.** Please check the API key.", 'error');
-                    } else if (response.status === 502 || response.status === 503) {
-                        addMessage("Tanvi is waking up from sleep mode. Please wait 20‑30 seconds and try again.", 'error');
-                    } else {
-                        addMessage(`**Server error (${response.status}).** Please try again.`, 'error');
-                    }
+                const r = await fetch(API_URL, { method:'POST',
+                    headers:{'Content-Type':'application/json','Authorization':`Bearer ${API_KEY}`},
+                    body: JSON.stringify({ message, session_id: sessionId }),
+                    signal: abortController.signal });
+                removeTyping(); abortController = null;
+                if (!r.ok) {
+                    if (r.status === 401) addMessage("Authentication failed.", 'error');
+                    else if (r.status === 502 || r.status === 503) addMessage("Tanvi is waking up. Please wait 20-30 seconds.", 'error');
+                    else addMessage(`Server error (${r.status})`, 'error');
                     setStatus('offline');
                 } else {
-                    const data = await response.json();
-                    if (data.reply) {
-                        addMessage(data.reply, 'tanvi');
-                        setStatus('online');
-                    } else if (data.error) {
-                        addMessage(`**Error:** ${data.error}`, 'error');
-                    }
+                    const d = await r.json();
+                    if (d.reply) { addMessage(d.reply, 'tanvi'); setStatus('online'); }
+                    else if (d.error) addMessage(d.error, 'error');
                 }
-            } catch (error) {
-                removeTypingIndicator();
-                addMessage("**Connection failed.** Please check your internet and try again.", 'error');
-                setStatus('offline');
+            } catch(e) {
+                if (e.name !== 'AbortError') { removeTyping(); addMessage("Connection failed.", 'error'); setStatus('offline'); }
+                abortController = null;
             }
-
-            sendBtn.disabled = false;
-            userInput.focus();
+            sendBtn.disabled = false; userInput.focus();
         }
 
-        // Auto-resize textarea
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-        });
-
-        // Send on Enter, new line on Shift+Enter
+        userInput.addEventListener('input', function(){ this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
         userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+            if (e.key === 'ArrowUp' && this.value === '') {
+                const lastUser = [...messages].reverse().find(m => m.role === 'user');
+                if (lastUser) editMessage(lastUser.id);
             }
         });
+        sendBtn.addEventListener('click', () => sendMessage());
 
-        sendBtn.addEventListener('click', sendMessage);
-
-        // Initialize
+        // Init
         setStatus('connecting');
-        checkBackend().then(online => {
-            if (online) {
-                addMessage("Hello! I'm **Tanvi**, an AI assistant built from scratch by Dhruv. I can help with code, answer questions, explain concepts, and more. What would you like to explore?", 'tanvi');
-            } else {
-                addMessage("**Tanvi is waking up...** This may take 20‑30 seconds on first connection . Please wait and try again.", 'error');
+        checkBackend().then(ok => {
+            if (ok) addMessage("Hello! I'm **Tanvi**, a professional AI assistant. How can I help you today?", 'tanvi');
+            else {
+                addMessage("Tanvi is starting up (Render free tier). Please wait 20-30 seconds.", 'error');
                 setTimeout(async () => {
-                    const ok = await checkBackend();
-                    if (ok) {
-                        addMessage("I'm awake now! How can I help you today?", 'tanvi');
-                    } else {
-                        addMessage("**Still connecting...** Please refresh or try again shortly.", 'error');
-                    }
+                    if (await checkBackend()) addMessage("I'm ready now! How can I help?", 'tanvi');
+                    else addMessage("Still connecting. Please try again shortly.", 'error');
                 }, 20000);
             }
         });
     </script>
 </body>
-    </html>
+</html>
